@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree Builder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 95vw;
+            overflow-x: auto;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        input[type="text"] {
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .tree-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 400px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .node {
+            position: relative;
+            display: inline-block;
+            text-align: center;
+            margin: 10px;
+        }
+        
+        .node-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: 3px solid #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0 auto 10px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .node-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .node-circle.highlighted {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            border-color: #ef6c00;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .tree-line {
+            stroke: #666;
+            stroke-width: 2;
+            opacity: 0.7;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .info-box {
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .step-info {
+            background: #e3f2fd;
+        }
+        
+        .level-order-info {
+            background: #f3e5f5;
+            border-left-color: #9c27b0;
+        }
+        
+        .insertion-sequence {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .current-value {
+            background: #ff9800;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .comparison-box {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+        
+        .correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .example-values {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive AVL Tree Builder</h1>
+        <div class="subtitle">Enter your values and build a perfectly balanced AVL tree</div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <input type="text" id="valuesInput" placeholder="Enter values separated by commas (e.g., 10,20,30,6,9,13,2,11,50,43,36,29,80)">
+                <button onclick="buildTree()">Build AVL Tree</button>
+            </div>
+            <div class="example-values">
+                Example: 10,20,30,6,9,13,2,11,50,43,36,29,80 or try your own values!
+            </div>
+        </div>
+        
+        <div class="controls" id="controls" style="display: none;">
+            <button onclick="prevStep()">Previous Step</button>
+            <button onclick="nextStep()">Next Step</button>
+            <button onclick="showFinal()">Show Final Tree</button>
+            <button onclick="getLevelOrder()">Get Level Order</button>
+            <button onclick="reset()">New Tree</button>
+        </div>
+        
+        <div class="insertion-sequence" id="sequence-display" style="display: none;"></div>
+        
+        <div class="tree-container" id="tree-container">
+            <div id="tree-display">
+                <div style="text-align: center; padding: 100px; color: #666;">
+                    Enter values above to build your AVL tree
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel" id="info-panel" style="display: none;">
+            <div class="info-box step-info" id="step-info">
+                Enter values to start building your AVL tree
+            </div>
+            <div class="info-box level-order-info" id="level-order-info">
+                Level order traversal will appear here after building the tree
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AVLNode {
+            constructor(value) {
+                this.value = value;
+                this.left = null;
+                this.right = null;
+                this.height = 1;
+            }
+        }
+
+        class AVLTree {
+            constructor() {
+                this.root = null;
+                this.rotationInfo = [];
+            }
+
+            getHeight(node) {
+                return node ? node.height : 0;
+            }
+
+            getBalance(node) {
+                return node ? this.getHeight(node.left) - this.getHeight(node.right) : 0;
+            }
+
+            updateHeight(node) {
+                if (node) {
+                    node.height = 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
+                }
+            }
+
+            rotateRight(y) {
+                this.rotationInfo.push(`Right rotation at node ${y.value}`);
+                const x = y.left;
+                const T2 = x.right;
+
+                x.right = y;
+                y.left = T2;
+
+                this.updateHeight(y);
+                this.updateHeight(x);
+
+                return x;
+            }
+
+            rotateLeft(x) {
+                this.rotationInfo.push(`Left rotation at node ${x.value}`);
+                const y = x.right;
+                const T2 = y.left;
+
+                y.left = x;
+                x.right = T2;
+
+                this.updateHeight(x);
+                this.updateHeight(y);
+
+                return y;
+            }
+
+            insert(node, value) {
+                this.rotationInfo = [];
+                
+                // Step 1: Perform normal BST insertion
+                if (!node) {
+                    return new AVLNode(value);
+                }
+
+                if (value < node.value) {
+                    node.left = this.insert(node.left, value);
+                } else if (value > node.value) {
+                    node.right = this.insert(node.right, value);
+                } else {
+                    return node; // Duplicate values not allowed
+                }
+
+                // Step 2: Update height of current node
+                this.updateHeight(node);
+
+                // Step 3: Get balance factor
+                const balance = this.getBalance(node);
+
+                // Step 4: Perform rotations if needed
+                // Left Left Case
+                if (balance > 1 && value < node.left.value) {
+                    return this.rotateRight(node);
+                }
+
+                // Right Right Case
+                if (balance < -1 && value > node.right.value) {
+                    return this.rotateLeft(node);
+                }
+
+                // Left Right Case
+                if (balance > 1 && value > node.left.value) {
+                    node.left = this.rotateLeft(node.left);
+                    return this.rotateRight(node);
+                }
+
+                // Right Left Case
+                if (balance < -1 && value < node.right.value) {
+                    node.right = this.rotateRight(node.right);
+                    return this.rotateLeft(node);
+                }
+
+                return node;
+            }
+
+            insertValue(value) {
+                this.rotationInfo = [];
+                this.root = this.insert(this.root, value);
+                return this.rotationInfo;
+            }
+
+            getLevelOrder() {
+                if (!this.root) return [];
+                
+                const result = [];
+                const queue = [this.root];
+                
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    result.push(current.value);
+                    
+                    if (current.left) queue.push(current.left);
+                    if (current.right) queue.push(current.right);
+                }
+                
+                return result;
+            }
+
+            getInOrder(node = this.root) {
+                if (!node) return [];
+                return [...this.getInOrder(node.left), node.value, ...this.getInOrder(node.right)];
+            }
+        }
+
+        let values = [];
+        let currentStep = 0;
+        let trees = [];
+        let currentTree = new AVLTree();
+
+        function parseInput() {
+            const input = document.getElementById('valuesInput').value.trim();
+            if (!input) {
+                alert('Please enter some values!');
+                return false;
+            }
+
+            try {
+                values = input.split(',').map(v => {
+                    const num = parseInt(v.trim());
+                    if (isNaN(num)) {
+                        throw new Error(`"${v.trim()}" is not a valid number`);
+                    }
+                    return num;
+                });
+                
+                if (values.length === 0) {
+                    throw new Error('No valid numbers found');
+                }
+                
+                return true;
+            } catch (error) {
+                alert('Error parsing input: ' + error.message);
+                return false;
+            }
+        }
+
+        function buildTree() {
+            if (!parseInput()) return;
+            
+            trees = [];
+            currentStep = 0;
+            
+            // Initial empty tree
+            trees.push({ 
+                tree: null, 
+                inserted: [], 
+                info: "Starting with empty tree",
+                rotations: []
+            });
+            
+            // Build step by step
+            const tree = new AVLTree();
+            for (let i = 0; i < values.length; i++) {
+                const rotations = tree.insertValue(values[i]);
+                const treeCopy = cloneTree(tree.root);
+                trees.push({ 
+                    tree: treeCopy, 
+                    inserted: values.slice(0, i + 1),
+                    info: `Inserted ${values[i]}${rotations.length > 0 ? '. Rotations: ' + rotations.join(', ') : '. No rotation needed.'}`,
+                    rotations: rotations
+                });
+            }
+            
+            currentTree = tree;
+            
+            // Show controls and update display
+            document.getElementById('controls').style.display = 'block';
+            document.getElementById('sequence-display').style.display = 'block';
+            document.getElementById('info-panel').style.display = 'grid';
+            
+            updateDisplay();
+        }
+
+        function cloneTree(node) {
+            if (!node) return null;
+            const newNode = new AVLNode(node.value);
+            newNode.height = node.height;
+            newNode.left = cloneTree(node.left);
+            newNode.right = cloneTree(node.right);
+            return newNode;
+        }
+
+        function renderTree(node, x = 400, y = 80, xOffset = 150, level = 0) {
+            if (!node) return '';
+            
+            let html = `<div class="node" style="position: absolute; left: ${x-25}px; top: ${y}px;">
+                <div class="node-circle">${node.value}</div>
+            </div>`;
+            
+            const nextXOffset = Math.max(xOffset * 0.6, 40);
+            
+            if (node.left) {
+                html += renderTree(node.left, x - xOffset, y + 80, nextXOffset, level + 1);
+                html += `<svg style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <line class="tree-line" x1="${x}" y1="${y + 25}" x2="${x - xOffset}" y2="${y + 105}"></line>
+                </svg>`;
+            }
+            
+            if (node.right) {
+                html += renderTree(node.right, x + xOffset, y + 80, nextXOffset, level + 1);
+                html += `<svg style="position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <line class="tree-line" x1="${x}" y1="${y + 25}" x2="${x + xOffset}" y2="${y + 105}"></line>
+                </svg>`;
+            }
+            
+            return html;
+        }
+
+        function updateDisplay() {
+            const treeDisplay = document.getElementById('tree-display');
+            const stepInfo = document.getElementById('step-info');
+            const sequenceDisplay = document.getElementById('sequence-display');
+            const levelOrderInfo = document.getElementById('level-order-info');
+            
+            if (currentStep === 0) {
+                treeDisplay.innerHTML = '<div style="text-align: center; padding: 100px; color: #666;">Empty Tree</div>';
+                stepInfo.innerHTML = trees[currentStep].info;
+                sequenceDisplay.innerHTML = 'Ready to insert values...';
+                levelOrderInfo.innerHTML = 'Level order will be shown after tree construction.';
+                return;
+            }
+            
+            const currentTreeState = trees[currentStep];
+            const treeHtml = renderTree(currentTreeState.tree);
+            treeDisplay.innerHTML = `<div style="position: relative; width: 800px; height: 500px;">${treeHtml}</div>`;
+            stepInfo.innerHTML = currentTreeState.info;
+            
+            // Update sequence display
+            let sequenceHtml = 'Progress: ';
+            for (let i = 0; i < values.length; i++) {
+                if (i < currentTreeState.inserted.length) {
+                    if (i === currentTreeState.inserted.length - 1) {
+                        sequenceHtml += `<span class="current-value">${values[i]}</span>`;
+                    } else {
+                        sequenceHtml += `${values[i]}`;
+                    }
+                } else {
+                    sequenceHtml += `<span style="color: #ccc;">${values[i]}</span>`;
+                }
+                if (i < values.length - 1) sequenceHtml += ', ';
+            }
+            sequenceDisplay.innerHTML = sequenceHtml;
+            
+            // Update level order info
+            if (currentTreeState.tree) {
+                const levelOrder = getLevelOrderFromTree(currentTreeState.tree);
+                levelOrderInfo.innerHTML = `
+                    <strong>Current Level Order:</strong><br>
+                    <span style="font-family: monospace; background: #e8f5e8; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px;">
+                        ${levelOrder.join(', ')}
+                    </span>
+                `;
+            }
+        }
+
+        function getLevelOrderFromTree(node) {
+            if (!node) return [];
+            
+            const result = [];
+            const queue = [node];
+            
+            while (queue.length > 0) {
+                const current = queue.shift();
+                result.push(current.value);
+                
+                if (current.left) queue.push(current.left);
+                if (current.right) queue.push(current.right);
+            }
+            
+            return result;
+        }
+
+        function nextStep() {
+            if (currentStep < trees.length - 1) {
+                currentStep++;
+                updateDisplay();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateDisplay();
+            }
+        }
+
+        function showFinal() {
+            currentStep = trees.length - 1;
+            updateDisplay();
+        }
+
+        function getLevelOrder() {
+            if (!currentTree.root) {
+                alert('Please build a tree first!');
+                return;
+            }
+            
+            const levelOrder = currentTree.getLevelOrder();
+            const inOrder = currentTree.getInOrder();
+            
+            const resultHtml = `
+                <div class="comparison-box correct">
+                    <h3 style="margin-top: 0;">✅ Final AVL Tree Traversals</h3>
+                    <div style="margin: 15px 0;">
+                        <strong>Level Order Traversal:</strong><br>
+                        <span style="font-family: monospace; font-size: 18px; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 4px; display: inline-block; margin-top: 5px;">
+                            ${levelOrder.join(', ')}
+                        </span>
+                    </div>
+                    <div style="margin: 15px 0;">
+                        <strong>In-Order Traversal (sorted):</strong><br>
+                        <span style="font-family: monospace; font-size: 16px; background: rgba(255,255,255,0.7); padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px;">
+                            ${inOrder.join(', ')}
+                        </span>
+                    </div>
+                    <div style="margin-top: 15px; font-size: 14px;">
+                        <strong>Tree Properties:</strong><br>
+                        • Total nodes: ${levelOrder.length}<br>
+                        • Tree height: ${getTreeHeight(currentTree.root)}<br>
+                        • All AVL properties maintained ✓
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('level-order-info').innerHTML = resultHtml;
+        }
+
+        function getTreeHeight(node) {
+            if (!node) return 0;
+            return Math.max(getTreeHeight(node.left), getTreeHeight(node.right)) + 1;
+        }
+
+        function reset() {
+            document.getElementById('valuesInput').value = '';
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('sequence-display').style.display = 'none';
+            document.getElementById('info-panel').style.display = 'none';
+            document.getElementById('tree-display').innerHTML = `
+                <div style="text-align: center; padding: 100px; color: #666;">
+                    Enter values above to build your AVL tree
+                </div>
+            `;
+            values = [];
+            trees = [];
+            currentStep = 0;
+            currentTree = new AVLTree();
+        }
+
+        // Allow Enter key to build tree
+        document.getElementById('valuesInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buildTree();
+            }
+        });
+
+        // Load example on page load
+        window.onload = function() {
+            document.getElementById('valuesInput').value = '10,20,30,6,9,13,2,11,50,43,36,29,80';
+        };
+    </script>
+</body>
+</html>
